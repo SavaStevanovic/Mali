@@ -40,7 +40,7 @@ Matrix<T>::~Matrix()
 }
 
 template<typename T>
-void CopyValues(const Matrix<T> & matrix)
+void Matrix<T>::CopyValues(const Matrix<T> & matrix)
 {
 	for (unsigned i = 0; i < rows_; ++i) {
 		for (unsigned j = 0; j < cols_; ++j) {
@@ -64,7 +64,10 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& matrix)
 	}
 
 	if (this->rows_ != matrix.rows_ || this->cols_ != matrix.cols_) {
-		this->~Matrix();
+		for (unsigned i = 0; i < rows_; ++i) {
+			delete[] this->matrix[i];
+		}
+		delete[] this->matrix;
 
 		this->rows_ = matrix.rows_;
 		this->cols_ = matrix.cols_;
@@ -101,76 +104,105 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>&)
 }
 
 template<typename T>
-Matrix<T>& Matrix<T>::operator*=(const Matrix<T>&)
+Matrix<T>& Matrix<T>::operator*=(const Matrix<T>& matrix)
 {
-	// TODO: insert return statement here
+	Matrix<T> temp(this->rows_, matrix.cols_);
+	for (unsigned i = 0; i < temp.rows_; ++i) {
+		for (unsigned j = 0; j < temp.cols_; ++j) {
+			for (unsigned k = 0; k < this->cols_; ++k) {
+				temp.matrix[i][j] += this->matrix[i][k] * matrix.matrix[k][j];
+			}
+		}
+	}
+	return (*this = temp);
 }
 
 template<typename T>
-Matrix<T>& Matrix<T>::operator*=(T)
+Matrix<T>& Matrix<T>::operator*=(T multiplier)
 {
-	// TODO: insert return statement here
+	for (int i = 0; i < this->rows_; ++i) {
+		for (int j = 0; j < this->cols_; ++j) {
+			this->matrix[i][j] *= multiplier;
+		}
+	}
+	return *this;
 }
 
 template<typename T>
-Matrix<T>& Matrix<T>::operator/=(T)
+Matrix<T>& Matrix<T>::operator/=(T devider)
 {
-	// TODO: insert return statement here
+	for (int i = 0; i < this->rows_; ++i) {
+		for (int j = 0; j < this->cols_; ++j) {
+			this->matrix[i][j] /= devider;
+		}
+	}
+	return *this;
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::operator^(int)
+std::ostream & operator<<(std::ostream &, const Matrix<T>& matrix)
 {
-	return Matrix<T>();
-}
-
-
-template<typename T>
-std::ostream & operator<<(std::ostream &, const Matrix<T>&)
-{
-	// TODO: insert return statement here
-}
-
-template<typename T>
-std::istream & operator>>(std::istream &, Matrix<T>&)
-{
-	// TODO: insert return statement here
+	for (int i = 0; i < matrix.rows_; ++i) {
+		os << matrix.matrix[i][0];
+		for (int j = 1; j < matrix.cols_; ++j) {
+			os << " " << matrix.matrix[i][j];
+		}
+		os << endl;
+	}
+	return os;
 }
 
 template<typename T>
-Matrix<T> operator+(const Matrix<T>&, const Matrix<T>&)
+std::istream & operator>>(std::istream &, Matrix<T>& matrix)
 {
-	return Matrix<T>();
+	for (int i = 0; i < matrix.rows_; ++i) {
+		for (int j = 0; j < matrix.cols_; ++j) {
+			is >> matrix.matrix[i][j];
+		}
+	}
+	return is;
+}
+
+template<typename T>
+Matrix<T> operator+(const Matrix<T>& matrix1, const Matrix<T>& matrix2)
+{
+	Matrix temp_matrix(matrix1);
+	return (temp_matrix += matrix2);
 }
 
 template<typename T>
 Matrix<T> operator-(const Matrix<T>&, const Matrix<T>&)
 {
-	return Matrix<T>();
+	Matrix temp_matrix(matrix1);
+	return (temp_matrix -= matrix2);
 }
 
 template<typename T>
 Matrix<T> operator*(const Matrix<T>&, const Matrix<T>&)
 {
-	return Matrix<T>();
+	Matrix temp_matrix(matrix1);
+	return (temp_matrix *= matrix2);
 }
 
 template<typename T>
-Matrix<T> operator*(const Matrix<T>&, double)
+Matrix<T> operator*(const Matrix<T>& matrix, T multiplier)
 {
-	return Matrix<T>();
+	Matrix temp_matrix(matrix);
+	return (matrix *= multiplier);
 }
 
 template<typename T>
-Matrix<T> operator*(T, const Matrix<T>&)
+Matrix<T> operator*(T multiplier, const Matrix<T>& matrix)
 {
-	return Matrix<T>();
+	Matrix temp_matrix(matrix);
+	return (temp_matrix *= multiplier);
 }
 
 template<typename T>
-Matrix<T> operator/(const Matrix<T>&, T)
+Matrix<T> operator/(const Matrix<T>&, T devider)
 {
-	return Matrix<T>();
+	Matrix temp_matrix(matrix);
+	return (matrix /= devider);
 }
 
 #endif

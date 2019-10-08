@@ -26,7 +26,6 @@ public:
 	Matrix<T>& operator*=(const Matrix<T>&);
 	Matrix<T>& operator*=(T);
 	Matrix<T>& operator/=(T);
-	Matrix<T>  operator^(int);
 
 	friend std::ostream& operator<<(std::ostream&, const Matrix<T>&);
 	void CopyValues(const Matrix<T> & matrix);
@@ -35,11 +34,17 @@ public:
 };
 
 
+template <typename T>
 Matrix<T> operator+(const Matrix<T>&, const Matrix<T>&);
+template <typename T>
 Matrix<T> operator-(const Matrix<T>&, const Matrix<T>&);
+template <typename T>
 Matrix<T> operator*(const Matrix<T>&, const Matrix<T>&);
-Matrix<T> operator*(const Matrix<T>&, double);
+template <typename T>
+Matrix<T> operator*(const Matrix<T>&, T);
+template <typename T>
 Matrix<T> operator*(T, const Matrix<T>&);
+template <typename T>
 Matrix<T> operator/(const Matrix<T>&, T);
 
 #endif
